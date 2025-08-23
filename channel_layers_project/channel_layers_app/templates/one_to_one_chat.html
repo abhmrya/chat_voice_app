@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="flex h-screen font-sans relative overflow-hidden">
+
+  <!-- Animated Background -->
+  <div class="absolute inset-0 bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 animate-gradient-x"></div>
+  <div class="absolute inset-0 bg-[url('https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png')] opacity-20"></div>
+
+  <!-- Sidebar -->
+  <div class="relative w-1/4 bg-cyan-500/20 backdrop-blur-2xl shadow-2xl p-6 flex flex-col border-r border-white/20">
+
+    <!-- Current User Info -->
+    <div class="flex items-center gap-3 mb-4">
+      <img src="{{ request.user.userprofile.profile_image.url }}" 
+           alt="Profile" class="w-12 h-12 rounded-full object-cover border-2 border-white">
+      <h5 class="text-xl font-bold text-gray-800"> {{ request.user.get_full_name }}</h5>
+    </div>
+    <hr>
+    <hr>
+
+
+
+    <h4 class="mt-4 font-semibold text-indigo-700">Chat with:</h4>
+
+    <!-- User list -->
+    <ul class="space-y-3 mt-4 overflow-y-auto flex-1 pr-2">
+      {% for u in users %}
+        {% if u != request.user %}
+        <form action="/one/" method="POST" class="flex items-center gap-3">
+          {% csrf_token %}
+          <input type="hidden" name="user" value="{{ u.username }}">
+          <button type="submit"
+            class="flex-1 text-left px-4 py-2 rounded-xl shadow-md bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:scale-105 transition transform">
+            <div class="flex items-center gap-2">
+              <img src="{{ u.userprofile.profile_image.url }}" 
+                   alt="Profile" class="w-8 h-8 rounded-full object-cover">
+              <span>{{ u.get_full_name|default:u.username }}</span>
+            </div>
+          </button>
+
+          <!-- Online status -->
+          {% if u.userprofile.online %}
+            <span id="{{u.username}}_status" class="text-green-600  font-bold">● Online</span>
+          {% else %}
+            <span id="{{u.username}}_status" class="text-gray-950 font-bold">● Offline</span>
+          {% endif %}
+        </form>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+    <!-- Back -->
+    <a href="/index"
+       class="mt-6 block w-full text-center bg-gradient-to-r from-red-400 to-pink-500 text-white py-2 rounded-xl shadow hover:scale-105 transition transform">
+       ⬅ Back To Home
+    </a>
+
+  </div>
+
+  <!-- Chat Section -->
+  <div class="relative flex-1 flex flex-col bg- backdrop-blur-lg shadow-2xl">
+
+    <!-- Chat Header -->
+    <div class="bg-blue-400 backdrop-blur-lg border-b border-white/30 shadow p-4 flex justify-between items-center">
+      {% if user %}
+      <div class="flex items-center gap-3">
+        <img src="{{ user.profile_image.url}}" 
+             alt="Profile" class="w-10 h-10 rounded-full object-cover">
+        <div>
+          <h2 class="text-lg font-bold text-indigo-700">💬 Chat with <strong class="text-gray-700">{{ user.user.get_full_name|default:user.user.username }}</strong></h2>
+          {% if user.online %}
+            <p id="{{user.user.username}}_status_o" class="text-emerald-600  font-bold">● Online</p>
+          {% else %}
+            <p id="{{user.user.username}}_status_o" class="text-gray-900 font-bold">● Offline</p>
+            {% if user.last_seen %}
+              <p class="text-xs text-gray-500">Last seen: {{ user.last_seen|date:"M d, H:i" }}</p>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Chat Messages -->
+    <div id="msg-box" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-white/40 to-white/10 backdrop-blur-md">
+      {% for chat_msg in chat_msgs %}
+        {% if chat_msg.send_from.username == request.user.username %}
+          <!-- My Message -->
+          <div class="flex justify-end items-end gap-2">
+            <div class="max-w-xs px-3 py-2 rounded-2xl bg-gradient-to-r from-green-400 to-emerald-500 text-white shadow-lg animate-fade-in">
+              <p class="text-sm font-semibold text-blue-900">You</p>
+              <div class="mt-1 flex justify-between items-end">
+                <p class="text-sm text-black/85">{{ chat_msg.message }}</p>
+                <span class="text-xs opacity-70 text-gray-900">{{ chat_msg.time|date:"H:i" }}</span>
+              </div>
+            </div>
+            <img src="{{ request.user.userprofile.profile_image.url}}" 
+                 alt="Profile" class="w-8 h-8 rounded-full object-cover">
+          </div>
+        {% else %}
+          <!-- Other User Message -->
+          <div class="flex justify-start items-end gap-2">
+            <img src="{{ chat_msg.send_from.userprofile.profile_image.url }}" 
+                 alt="Profile" class="w-8 h-8 rounded-full object-cover">
+            <div class="max-w-xs px-3 py-2 rounded-2xl bg-gradient-to-r from-purple-300 to-pink-300 text-gray-900 shadow-md animate-fade-in">
+              <p class="text-sm font-semibold text-indigo-700">{{ chat_msg.send_from.get_full_name|default:chat_msg.send_from.username }}</p>
+              <div class="mt-1 flex justify-between items-end">
+                <p class="text-sm">{{ chat_msg.message }}</p>
+                <span class="text-xs opacity-70">{{ chat_msg.time|date:"H:i" }}</span>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% empty %}
+        <p class="text-center text-gray-500">No messages yet. Start the conversation 👋</p>
+      {% endfor %}
+    </div>
+
+    <!-- Chat Input -->
+    <div class="bg-white/60 backdrop-blur-md border-t border-white/30 p-4 flex gap-2 shadow-inner rounded-b-2xl">
+      <input type="text" 
+             id="input-box"
+             placeholder="💬 Type your message..."
+             class="flex-1 px-4 py-2 border rounded-xl shadow-sm bg-white/70 focus:ring-2 focus:ring-purple-400 focus:outline-none">
+      <button id="submit-btn" 
+              class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-5 py-2 rounded-xl shadow hover:scale-105 transition transform">Send</button>
+    </div>
+
+    <!-- Hidden Data for WebSocket -->
+    <h1>{{ user_name|json_script:"user-name" }}</h1>
+    <h1>{{ request.user.username|json_script:"cuser-name" }}</h1>
+
+  </div>
+</div>
+
+
+<!-- 🎨 Animations -->
+<style>
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 12s ease infinite;
+}
+</style>
+
+<!-- Presence WebSocket -->
+<script>
+  const loggedin_user = JSON.parse(document.getElementById('cuser-name').textContent)
+  const online_status = new WebSocket(
+      "ws://" + window.location.host + "/ws/online-status/"
+  );
+  online_status.onopen = function() {
+    online_status.send(JSON.stringify({
+      'username': loggedin_user,
+      'type': 'open'
+    }))
+  };
+  window.addEventListener("beforeunload", function() {
+    online_status.send(JSON.stringify({
+      'username': loggedin_user,
+      'type': 'offline'
+    }))
+  });
+  online_status.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    if (data.username !== loggedin_user) {
+      const listStatus = document.getElementById(`${data.username}_status`);
+      const headerStatus = document.getElementById(`${data.username}_status_o`);
+      if (data.status === true) {
+        if (headerStatus) { headerStatus.innerText = "● Online"; headerStatus.style.color = "green"; }
+        if (listStatus) { listStatus.innerText = "● Online"; listStatus.style.color = "green"; }
+      } else {
+        if (headerStatus) { headerStatus.innerText = "● Offline"; headerStatus.style.color = "gray"; }
+        if (listStatus) { listStatus.innerText = "● Offline"; listStatus.style.color = "gray"; }
+      }
+    }
+  }
+</script>
+
+<!-- Messaging WebSocket -->
+<script>
+  const username = JSON.parse(document.getElementById('user-name').textContent)
+  const ws = new WebSocket("ws://" + window.location.host + "/ws/oc/" + username +"/");
+
+  ws.onopen = function(){ console.log("connected for message...") };
+  ws.onmessage = function(event){
+    const data = JSON.parse(event.data)
+    const cardBody = document.querySelector('#msg-box')
+    const message = document.createElement('div');
+    message.classList.add('p-2','rounded-lg','shadow','max-w-xs')
+    if (data.user === loggedin_user){
+      message.classList.add('bg-green-400','text-white','self-end');
+      message.innerText = "You: " + data.msg;
+    } else {
+      message.classList.add('bg-purple-300','text-black','self-start');
+      message.innerText = data.user + ": " + data.msg;
+    }
+    cardBody.appendChild(message);
+    cardBody.scrollTop = cardBody.scrollHeight;
+  };
+  document.getElementById('submit-btn').onclick = function(){
+    const input = document.getElementById('input-box')
+    const msg = input.value
+    if (msg){
+      ws.send(JSON.stringify({'msg': msg}))
+      input.value = ''
+    }
+  }
+</script>
+{% endblock content %}
