@@ -2,19 +2,35 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import redirect
 # from django.contrib.auth.views import l
 
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.shortcuts import redirect
 
 def google_login_jwt_token(request):
 
-    print("---------google login-------")
     if not request.user.is_authenticated:
         return redirect('/login/')
-    
+
     refresh = RefreshToken.for_user(request.user)
-    # Store tokens in session or pass as query params to your frontend
-    request.session['access'] = str(refresh.access_token)
-    request.session['refresh'] = str(refresh)
+
+    access = str(refresh.access_token)
+    refresh_token = str(refresh)
+
+    return redirect(
+        f"/google-success/?access={access}&refresh={refresh_token}"
+    )
+
+# def google_login_jwt_token(request):
+
+#     print("---------google login-------")
+#     if not request.user.is_authenticated:
+#         return redirect('/login/')
     
-    return redirect('/index/')  # or wherever your base.html loads
+#     refresh = RefreshToken.for_user(request.user)
+#     # Store tokens in session or pass as query params to your frontend
+#     request.session['access'] = str(refresh.access_token)
+#     request.session['refresh'] = str(refresh)
+    
+#     return redirect('/index/')  # or wherever your base.html loads
 
 # from rest_framework_simplejwt.tokens import RefreshToken
 # from django.shortcuts import redirect
