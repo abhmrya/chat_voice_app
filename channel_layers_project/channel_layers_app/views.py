@@ -141,7 +141,7 @@ def group_chatt(request):
             # Redirect to the new group chat
             return redirect(f"/group/{new_group.groupname}")
 
-    return render(request, "group.html", {
+    return render(request, "group_chat.html", {
         "groupname": allgroup,
         # ✅ FIX 1: group_name empty string so JS guard works correctly
         "group_name": "",
@@ -171,7 +171,7 @@ def group_chat(request, group_name):
             new_group, _ = Group_name.objects.get_or_create(groupname=group_nm)
             return redirect(f"/group/{new_group.groupname}")
 
-    return render(request, "group.html", {
+    return render(request, "group_chat.html", {
         # ✅ FIX 2: group_name context pass ho raha hai correctly
         "group_name": group_name,
         "chat_msgs": chat_msgs,
