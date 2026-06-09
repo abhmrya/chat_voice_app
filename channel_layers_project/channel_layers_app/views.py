@@ -166,7 +166,8 @@ def group_chat(request, group_name):
     chat_msgs = Chat_msg.objects.filter(group=group).order_by("time")
 
     if request.method == "POST":
-        group_nm = request.POST.get("group-name", "").strip()
+        # group_chat view mein
+        group_nm = request.POST.get('group-name', '').strip().replace(' ', '_')
         if group_nm:
             new_group, _ = Group_name.objects.get_or_create(groupname=group_nm)
             return redirect(f"/group/{new_group.groupname}")

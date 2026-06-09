@@ -86,7 +86,10 @@ INTERNAL_IPS = [
 
 TAILWIND_APP_NAME = 'theme'
 
-NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+import platform
+if platform.system() == "Windows":
+    NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+# Linux/Render pe ye line nahi chahiye
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -99,7 +102,6 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
 
-    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
