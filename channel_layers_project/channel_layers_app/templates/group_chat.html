@@ -152,8 +152,12 @@
         const loggedin_user = JSON.parse(document.getElementById('cuser-name').textContent);
         const groupname = JSON.parse(document.getElementById('group-name').textContent);
 
-        const ws = new WebSocket("ws://" + window.location.host + "/ws/ac/" + groupname + "/");
+        const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
 
+        const ws = new WebSocket(
+            ws_scheme + "://" + window.location.host + "/ws/ac/" + groupname + "/"
+        );
+        
         ws.onmessage = function(event){
             var data = JSON.parse(event.data);
             const cardBody = document.querySelector('#msg-box');

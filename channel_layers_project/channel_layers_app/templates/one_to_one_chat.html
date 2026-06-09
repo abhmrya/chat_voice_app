@@ -151,8 +151,10 @@
 <!-- Presence WebSocket -->
 <script>
   const loggedin_user = JSON.parse(document.getElementById('cuser-name').textContent)
+  const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+
   const online_status = new WebSocket(
-      "ws://" + window.location.host + "/ws/online-status/"
+      ws_scheme + "://" + window.location.host + "/ws/online-status/"
   );
   online_status.onopen = function() {
     online_status.send(JSON.stringify({
@@ -185,8 +187,11 @@
 <!-- Messaging WebSocket -->
 <script>
   const username = JSON.parse(document.getElementById('user-name').textContent)
-  const ws = new WebSocket("ws://" + window.location.host + "/ws/oc/" + username +"/");
+  const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
 
+  const ws = new WebSocket(
+      ws_scheme + "://" + window.location.host + "/ws/oc/" + username + "/"
+  );
   ws.onopen = function(){ console.log("connected for message...") };
   ws.onmessage = function(event){
     const data = JSON.parse(event.data)
