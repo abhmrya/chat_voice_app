@@ -43,7 +43,7 @@ urlpatterns = [
 
     # Social-auth routes (only if using social_django)
     path("auth/", include("social_django.urls", namespace="social")),
-    path("__reload__/", include("django_browser_reload.urls")),
+    # path("__reload__/", include("django_browser_reload.urls")),
 
 
 ]

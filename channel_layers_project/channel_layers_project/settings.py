@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     'tailwind',
     'theme',
-    'django_browser_reload',
+    # 'django_browser_reload',
 
 ]
 
@@ -66,9 +66,12 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
 
 # Ye existing Django user aur Google account ko email ke basis par link karne me help karta hai.
 SOCIAL_AUTH_ASSOCIATE_BY_EMAIL = True
@@ -105,9 +108,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
 
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
+    # "django_browser_reload.middleware.BrowserReloadMiddleware",
     'social_django.middleware.SocialAuthExceptionMiddleware',
-      "django_browser_reload.middleware.BrowserReloadMiddleware",
+    #   "django_browser_reload.middleware.BrowserReloadMiddleware",
 
 ]
 
@@ -251,7 +254,7 @@ SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": True,
 }
 
-CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:8000"]
+CSRF_TRUSTED_ORIGINS = ["https://chat-voice-app-lucz.onrender.com","http://127.0.0.1:8000"]
 
 LOGIN_URL = '/base/'
 
