@@ -66,6 +66,10 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
+
 # Ye existing Django user aur Google account ko email ke basis par link karne me help karta hai.
 SOCIAL_AUTH_ASSOCIATE_BY_EMAIL = True
 
