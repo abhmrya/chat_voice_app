@@ -190,6 +190,17 @@ class OnlineStatusConsumer(AsyncConsumer):
             connection_type
         )
 
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                "type": "send_online_status",
+                "value": json.dumps({
+                    "username": username,
+                    "status": connection_type == "open"
+                })
+            }
+        )
+
     async def send_onlineStatus(self, event):
         await self.send({
             "type": "websocket.send",
