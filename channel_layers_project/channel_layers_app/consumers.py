@@ -241,6 +241,7 @@ class MyAsyncConsumer(AsyncConsumer):
 
     async def websocket_connect(self, event):
         self.groupname = self.scope["url_route"]["kwargs"]["group_name"]
+        self.groupname = self.groupname.replace(" ", "_") 
         await self.channel_layer.group_add(self.groupname, self.channel_name)
         await self.send({"type": "websocket.accept"})
 
