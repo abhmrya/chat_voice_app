@@ -27,6 +27,11 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # temprary super user because shell is paid of render
+    path('makesuper/', views.make_superuser,name='makesuper'),
+
+
     path('', include('channel_layers_app.urls')),
     
 

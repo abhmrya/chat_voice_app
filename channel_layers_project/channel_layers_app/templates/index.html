@@ -1,4 +1,339 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.root {
+  display: flex;
+  height: 100vh;
+  background: #0a1628;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow: hidden;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 340px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: #111b2e;
+  border-right: 1px solid #1e2d45;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #1a2740;
+  border-bottom: 1px solid #1e2d45;
+}
+
+.avatar-lg { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+
+.sidebar-header-info .name { font-size: 15px; font-weight: 600; color: #e9edef; }
+.sidebar-header-info .sub  { font-size: 12px; color: #8696a0; }
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 10px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #b0bec5;
+  transition: background 0.15s, color 0.15s;
+  cursor: pointer;
+}
+.nav-item:hover  { background: #1a2740; color: #e9edef; }
+.nav-item.active { background: #1a3a5c; color: #53d8b8; }
+.nav-item .nav-icon { font-size: 20px; flex-shrink: 0; }
+
+.nav-divider {
+  height: 1px; background: #1e2d45; margin: 8px 10px;
+}
+
+/* ── MAIN ── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: #1a2740;
+  border-bottom: 1px solid #1e2d45;
+  flex-shrink: 0;
+}
+
+.topbar .page-title { font-size: 16px; font-weight: 600; color: #e9edef; }
+.topbar .user-chip  {
+  margin-left: auto;
+  font-size: 13px; color: #8696a0;
+}
+.topbar .user-chip span { color: #53d8b8; font-weight: 600; }
+
+.hamburger {
+  display: none;
+  background: none; border: none;
+  color: #e9edef; font-size: 22px; cursor: pointer; padding: 4px;
+}
+
+/* welcome section */
+.welcome-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #0d1b2a;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-area::before {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: radial-gradient(circle, #fff 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.welcome-card {
+  background: #111b2e;
+  border: 1px solid #1e2d45;
+  border-radius: 20px;
+  padding: 40px 48px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.welcome-emoji { font-size: 56px; margin-bottom: 20px; display: block; }
+
+.welcome-card h1 {
+  font-size: 24px; font-weight: 700;
+  color: #e9edef;
+  margin-bottom: 10px;
+}
+
+.welcome-card p {
+  font-size: 14px; color: #8696a0; line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.cta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.cta-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 12px;
+  border-radius: 14px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: transform 0.15s, background 0.15s;
+  border: 1px solid;
+}
+.cta-btn:hover { transform: translateY(-2px); }
+.cta-btn:active { transform: scale(0.97); }
+
+.cta-btn.group {
+  background: #0d2a4a;
+  border-color: #1e4a7a;
+  color: #64b5f6;
+}
+.cta-btn.group:hover { background: #112f54; }
+
+.cta-btn.one {
+  background: #0d3a2a;
+  border-color: #1e5a3a;
+  color: #53d8b8;
+}
+.cta-btn.one:hover { background: #124035; }
+
+.cta-btn .btn-icon { font-size: 26px; }
+
+.coming-soon {
+  margin-top: 20px;
+  display: inline-block;
+  padding: 6px 16px;
+  background: #1a2740;
+  border-radius: 99px;
+  font-size: 12px;
+  color: #ef5350;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* Sidebar overlay mobile */
+.sb-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); z-index: 30;
+}
+.sb-overlay.open { display: block; }
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed; inset-y: 0; left: 0; z-index: 40;
+    transform: translateX(-100%); transition: transform 0.3s ease;
+    width: 85vw; max-width: 340px;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .hamburger { display: block; }
+  .welcome-card { padding: 28px 20px; }
+  .cta-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="root">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <img src="{{ request.user.userprofile.profile_image.url }}" class="avatar-lg" alt="me">
+      <div class="sidebar-header-info">
+        <div class="name">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div class="sub">{{ request.user.email }}</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="/index" class="nav-item active">
+        <span class="nav-icon">🏠</span> Home
+      </a>
+      <a href="/group/" class="nav-item">
+        <span class="nav-icon">💬</span> Group Chat
+      </a>
+      <a href="/one" class="nav-item">
+        <span class="nav-icon">🧑‍💻</span> One-to-One Chat
+      </a>
+
+      <div class="nav-divider"></div>
+
+      <a href="/logout" class="nav-item" style="color:#ef9a9a">
+        <span class="nav-icon">🚪</span> Logout
+      </a>
+    </nav>
+  </aside>
+
+  <div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+      <button class="hamburger" onclick="openSidebar()">&#9776;</button>
+      <span class="page-title">Chat App</span>
+      <span class="user-chip">Logged in as <span>{{ request.user.username }}</span></span>
+    </div>
+
+    <div class="welcome-area">
+      <div class="welcome-card">
+        <span class="welcome-emoji">👋</span>
+        <h1>Welcome, {{ request.user.get_full_name|default:request.user.username }}!</h1>
+        <p>Connect and chat with your friends in real-time.<br>Choose where you want to go.</p>
+
+        <div class="cta-grid">
+          <a href="/group/" class="cta-btn group">
+            <span class="btn-icon">💬</span>
+            Group Chat
+          </a>
+          <a href="/one" class="cta-btn one">
+            <span class="btn-icon">🧑‍💻</span>
+            One-to-One
+          </a>
+        </div>
+
+        <span class="coming-soon">🎥 Video chat coming soon</span>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+{{ request.user.username|json_script:"cuser-name" }}
+
+<script>
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sb-overlay').classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sb-overlay').classList.remove('open');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const currentUser = JSON.parse(document.getElementById('cuser-name').textContent);
+  const WS   = location.protocol === 'https:' ? 'wss' : 'ws';
+  const HOST = window.location.host;
+
+  let presenceWS, isUnloading = false;
+
+  window.addEventListener('beforeunload', () => {
+    isUnloading = true;
+    if (presenceWS?.readyState === WebSocket.OPEN)
+      presenceWS.send(JSON.stringify({ username: currentUser, type: 'offline' }));
+  });
+
+  function connectPresence() {
+    presenceWS = new WebSocket(`${WS}://${HOST}/ws/online-status/`);
+
+    presenceWS.onopen = () => {
+      presenceWS.send(JSON.stringify({ username: currentUser, type: 'open' }));
+    };
+
+    presenceWS.onclose = () => {
+      if (!isUnloading) setTimeout(connectPresence, 3000);
+    };
+  }
+
+  connectPresence();
+});
+</script>
+
+{% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% extends 'base.html' %}
 {% block content %}
 
 <div class="min-h-screen flex flex-col md:flex-row relative overflow-hidden">
@@ -211,7 +546,25 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-{% endblock content %}
+{% endblock content %} {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 {% comment %} {% extends 'base.html' %}

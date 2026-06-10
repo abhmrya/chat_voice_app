@@ -49,3 +49,22 @@ def google_login_jwt_token(request):
 
 #     # Redirect to base.html and pass tokens via query params
 #     return redirect(f"/base/?access={refresh.access_token}&refresh={refresh}")
+
+
+
+
+
+# *******************************************
+# templary super user creat
+
+
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+
+
+def make_superuser(request):
+    user = User.objects.get(username="tumhara_username_yahan")
+    user.is_staff = True
+    user.is_superuser = True
+    user.save()
+    return JsonResponse({"msg": "done"})
