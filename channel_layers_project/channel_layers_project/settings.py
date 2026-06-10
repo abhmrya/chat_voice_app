@@ -58,8 +58,18 @@ INSTALLED_APPS = [
     'theme',
     # 'django_browser_reload',
 
-]
+     'cloudinary_storage',  # DEFAULT_FILE_STORAGE se pehle
+    'cloudinary',
+    # ... baaki apps
 
+]
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': config('CLOUDINARY_API_KEY'),
+    'API_SECRET': config('CLOUDINARY_API_SECRET'),
+}
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
