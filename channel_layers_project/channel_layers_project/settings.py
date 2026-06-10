@@ -15,6 +15,7 @@ from pathlib import Path
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+from decouple import config
 
 load_dotenv()
 
