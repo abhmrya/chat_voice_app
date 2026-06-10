@@ -430,3 +430,14 @@ Set these in your Render dashboard under the **Environment** tab:
 8. Click **Deploy**.
 
 ---
+
+### Home
+
+![alt text](image.png)
+
+### Group Chat
+![alt text](image-1.png)
+
+### One to One Chat
+
+![alt text](image-2.png)
