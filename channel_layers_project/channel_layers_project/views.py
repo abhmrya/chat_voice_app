@@ -63,7 +63,7 @@ from django.http import JsonResponse
 
 
 def make_superuser(request):
-    user = User.objects.get(username="tumhara_username_yahan")
+    user = User.objects.get(username="abhay")
     user.is_staff = True
     user.is_superuser = True
     user.save()
