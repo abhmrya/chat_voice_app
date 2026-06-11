@@ -21,20 +21,34 @@ from django.conf import settings
 from rest_framework_simplejwt.views import TokenRefreshView
 from . import views
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
+
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # temprary super user because shell is paid of render
+    path('makesuper/', views.make_superuser,name='makesuper'),
+
+
     path('', include('channel_layers_app.urls')),
+    
 
     path("get-jwt-token-after-google-login/", views.google_login_jwt_token, name="google_jwt"),
+
+    path(
+        "google-success/",
+        TemplateView.as_view(template_name="google_success.html"),
+        name="google_success"
+    ),
 
     # JWT refresh endpoint
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
     # Social-auth routes (only if using social_django)
     path("auth/", include("social_django.urls", namespace="social")),
-    path("__reload__/", include("django_browser_reload.urls")),
+    # path("__reload__/", include("django_browser_reload.urls")),
 
 
 ]
